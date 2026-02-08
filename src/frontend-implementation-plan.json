@@ -1,41 +1,33 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Worldwide-ready OpenStreetMap tile browsing (wrap-around + bounds + neutral default view)",
+  "title": "Allow cafe searches without keyword and support independent City/Area filters",
   "requirements": [
     {
-      "id": "REQ-12",
-      "summary": "Prevent invalid OpenStreetMap tile requests by adding longitudinal wrap-around, Web Mercator latitude clamping, and tile Y bounds handling in the canvas tile map renderer.",
+      "id": "REQ-15",
+      "summary": "Update cafe search UI and React Query hook to allow searches with keyword optional, with independent City and Area filters passed to backend searchCafes.",
       "acceptanceCriteria": [
-        "Panning horizontally across the International Date Line continues to render map tiles (tile X wraps correctly for the current zoom level).",
-        "Panning vertically does not request tiles outside valid Web Mercator bounds (tile Y is clamped to the valid range for the current zoom level).",
-        "No console errors are produced due to invalid tile URLs when panning/zooming around the world."
+        "The search button is enabled when at least one of: keyword, city, or area has non-whitespace content.",
+        "Submitting the form triggers a React Query search request when at least one field is provided; it does not require keyword.",
+        "The frontend search hook includes keyword, city, and area in its queryKey and passes all three to actor.searchCafes(keyword, cityOrNull, areaOrNull).",
+        "The UI provides separate inputs for City and Area (or otherwise captures both values distinctly) and uses English labels/placeholders.",
+        "The empty state and results summary text correctly reflect searches that may omit keyword (e.g., city-only/area-only searches do not display misleading 'Showing results for \"\"')."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/webMercator.ts",
-          "operation": "create",
-          "description": "Add reusable Web Mercator helpers: clamp latitude to valid Mercator range, normalize longitude into [-180, 180), convert lat/lng <-> pixel space, wrap tile X by zoom world width (2^zoom), and clamp tile Y to [0, 2^zoom - 1]."
+          "path": "frontend/src/hooks/useCafeSearch.ts",
+          "operation": "modify",
+          "description": "Update useCafeSearch to accept keyword, city, and area; enable searching when any field is non-blank; include keyword/city/area in the React Query queryKey; and pass all three values to actor.searchCafes(keyword, cityOrNull, areaOrNull). Ensure it returns an empty array and does not query when all three inputs are blank."
         },
         {
-          "path": "frontend/src/components/cafes/CafeTileMap.tsx",
+          "path": "frontend/src/pages/CafeSearchPage.tsx",
           "operation": "modify",
-          "description": "Update tile math to use Web Mercator helpers so rendering works worldwide: normalize center longitude, clamp center latitude, wrap requested tileX for the URL/cache key while keeping drawing positions consistent, and clamp the tileY loop range so no invalid tile URLs are ever requested when panning/zooming."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Use a world-level default map viewport when there are no cafe results/center override, while preserving current behavior when cafes are present or a cafe is selected.",
-      "acceptanceCriteria": [
-        "When the map is shown without any cafes/center override, the initial viewport is a world-level view (not a single-city default).",
-        "When cafes are present, the map still centers as it does today (first cafe by default, and centers on a cafe when selected from the list)."
-      ],
-      "file_operations": [
+          "description": "Update the search form to include separate City and Area inputs (using existing shadcn/ui Input and Button components; do not edit ui components). Verify the component's usage instructions before implementing. Update submit/disabled logic so searches run when any of keyword/city/area is provided (keyword optional). Ensure both city and area are captured distinctly, included in searchParams, passed into useCafeSearch, and the results summary text does not show misleading empty keyword text for city-only/area-only searches."
+        },
         {
-          "path": "frontend/src/components/cafes/CafeTileMap.tsx",
+          "path": "frontend/src/components/cafes/EmptyState.tsx",
           "operation": "modify",
-          "description": "Adjust initial center/zoom behavior: when no cafes and no centerOn override, initialize to a neutral worldwide-ready center and world-level zoom; when cafes exist or centerOn is provided, keep the current centering behavior and restore the current map-appropriate zoom level for results. Ensure offset state is reset appropriately when programmatically re-centering to preserve existing map/list coordination behavior."
+          "description": "Update EmptyState to accept and display keyword, city, and area context appropriately, including cases where keyword is omitted. Use existing shadcn/ui Alert component (compose only; do not edit ui components). Verify the component's usage instructions before implementing. Ensure guidance text appears only when all search fields are blank, and no-results text accurately reflects whichever filters were provided."
         }
       ]
     }

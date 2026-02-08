@@ -1,15 +1,17 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 11,
   "summary": "Build a cafe finder web app using JavaScript with a map-based UI for browsing/searching cafes, using a deployment-supported map solution (e.g., tile-based map) instead of Google Maps if required.",
   "architectural_notes": [
     "Deployment environment may not support Google Maps libraries; use an alternative map implementation (e.g., tile-based map service) for the interactive map UI.",
-    "User request: app should work worldwide; prefers using Google Maps for the map experience."
+    "User request: app should work worldwide; prefers using Google Maps for the map experience.",
+    "Update backend search semantics so keyword is optional; allow city and/or area to return results even when keyword is empty/non-matching (combine filters appropriately)."
   ],
   "known_issues": [
-    "Deployment failed; likely due to unsupported Google Maps library integration in the build/preview environment."
+    "Deployment failed; likely due to unsupported Google Maps library integration in the build/preview environment.",
+    "Search by city/area currently returns no results unless the keyword matches first (keyword is effectively required)."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-cafe-finder-app-experience-that-lets-users-search-and-browse-cafes-in-a-list-based-ui-no-map-ui-include-a-search-input-name-keyword-and-a-location-text-field-city-area-and-display-matching-cafes-with-basic-details-name-address-tags-if-available",
@@ -106,6 +108,14 @@
         "REQ-13"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-cafe-search-form-and-data-hook-so-users-can-search-when-keyword-is-empty-as-long-as-city-and-or-area-is-provided-and-ensure-both-city-and-area-are-passed-to-the-backend-searchcafes-call",
+      "title": "Update the frontend cafe search form and data hook so users can search when keyword is empty as long as city and/or area is provided, and ensure both city and area are passed to the backend searchCafes call.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -133,6 +143,20 @@
       "id": "AR-5",
       "summary": "Add Google Maps integration to support worldwide map coverage for the cafe finder app",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Fix search so keyword is optional and city/area filters work independently; searching tea/coffee/etc should return relevant cafes and searching by city/area should surface matching cafes",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Update the Motoko backend searchCafes logic so that keyword matching is optional and city and area filters can return results independently (i.e., any combination of keyword, city, and area should work, including city-only and area-only searches).",
+      "reqIds": [
+        "REQ-14"
+      ],
       "status": "pending"
     }
   ],

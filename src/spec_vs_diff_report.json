@@ -1,15 +1,34 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T03:13:58.944Z",
-  "summary": "Diff adds Web Mercator utilities and updates the existing custom tile map to normalize longitude, clamp latitude, wrap tile X, clamp tile Y, and set a world-level default center/zoom when no cafes are present—aligning with worldwide browsing and default viewport requirements.",
-  "missing_requirements": [],
+  "generatedAt": "2026-02-08T03:25:45.838Z",
+  "summary": "Backend search logic was updated to make keyword optional and apply city/area filters, and the frontend was updated to allow searching with city/area only and to pass keyword/city/area through React Query. However, the backend does not implement the requirement to return an empty result set when all three inputs are empty/blank (it would return all cafes when all filters are effectively unconstrained).",
+  "missing_requirements": [
+    {
+      "id": "REQ-14",
+      "requirement": "If all three inputs are empty/blank, the backend returns an empty result set (to avoid returning all cafes unintentionally).",
+      "reason": "In searchCafes, when keyword is empty and city/area are null, all three match flags evaluate to true, so every cafe is added to the results. There is no guard to return [] when all filters are blank/absent.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "requirement": "Treat empty/blank (whitespace) keyword/city/area inputs as empty for filtering purposes (per AC wording: empty/blank).",
+      "reason": "Backend checks only keyword.size() == 0 and does not trim whitespace; similarly city/area matching only distinguishes null vs ?Text and does not trim. If the caller passes whitespace-only strings, the behavior may not meet the \"blank\" acceptance criteria.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.74,
+  "confidence": 0.72,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/cafes/CafeTileMap.tsx",
-    "frontend/src/lib/webMercator.ts",
+    "frontend/src/components/cafes/EmptyState.tsx",
+    "frontend/src/hooks/useCafeSearch.ts",
+    "frontend/src/pages/CafeSearchPage.tsx",
     "project_state.json"
   ]
 }

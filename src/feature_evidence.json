@@ -2,11 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-existing-tile-based-map-openstreetmap-tiles-to-support-worldwide-browsing-reliably-by-handling-longitudinal-wrap-around-and-latitude-bounds-so-panning-does-not-request-invalid-tiles-and-the-map-continues-rendering-anywhere-on-earth",
-      "featureTitle": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
+      "featureId": "feature-update-the-frontend-cafe-search-form-and-data-hook-so-users-can-search-when-keyword-is-empty-as-long-as-city-and-or-area-is-provided-and-ensure-both-city-and-area-are-passed-to-the-backend-searchcafes-call",
+      "featureTitle": "Update the frontend cafe search form and data hook so users can search when keyword is empty as long as city and/or area is provided, and ensure both city and area are passed to the backend searchCafes call.",
       "files": [
-        "frontend/src/components/cafes/CafeTileMap.tsx",
-        "frontend/src/lib/webMercator.ts"
+        "frontend/src/components/cafes/EmptyState.tsx",
+        "frontend/src/hooks/useCafeSearch.ts",
+        "frontend/src/pages/CafeSearchPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,25 +17,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-adjust-the-map-s-default-view-so-the-app-feels-worldwide-ready-when-no-cafe-results-are-available-e-g-start-at-a-world-level-zoom-and-a-neutral-center-while-preserving-the-current-behavior-of-centering-on-the-first-result-or-a-selected-cafe-when-cafes-are-present",
-      "featureTitle": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
-      "files": [
-        "frontend/src/components/cafes/CafeTileMap.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
+        "REQ-15"
       ],
       "confidence": "high"
     }

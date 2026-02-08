@@ -12,19 +12,26 @@ import { useCafeSearch } from '@/hooks/useCafeSearch';
 export default function CafeSearchPage() {
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
-  const [searchParams, setSearchParams] = useState<{ keyword: string; city: string } | null>(null);
+  const [area, setArea] = useState('');
+  const [searchParams, setSearchParams] = useState<{ keyword: string; city: string; area: string } | null>(null);
   const [selectedCafeId, setSelectedCafeId] = useState<string | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>(undefined);
 
   const { data: cafes, isLoading, error } = useCafeSearch(
     searchParams?.keyword || '',
-    searchParams?.city || null
+    searchParams?.city || null,
+    searchParams?.area || null
   );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (keyword.trim()) {
-      setSearchParams({ keyword: keyword.trim(), city: city.trim() });
+    // Allow search if at least one field has content
+    if (keyword.trim() || city.trim() || area.trim()) {
+      setSearchParams({ 
+        keyword: keyword.trim(), 
+        city: city.trim(),
+        area: area.trim()
+      });
       setSelectedCafeId(null);
       setMapCenter(undefined);
     }
@@ -45,6 +52,18 @@ export default function CafeSearchPage() {
   const showResults = searchParams !== null;
   const hasResults = cafes && cafes.length > 0;
 
+  // Check if search button should be enabled
+  const isSearchEnabled = keyword.trim() || city.trim() || area.trim();
+
+  // Build results summary text
+  const getResultsSummary = () => {
+    const parts: string[] = [];
+    if (searchParams?.keyword) parts.push(`"${searchParams.keyword}"`);
+    if (searchParams?.city) parts.push(`in ${searchParams.city}`);
+    if (searchParams?.area) parts.push(`area: ${searchParams.area}`);
+    return parts.length > 0 ? parts.join(' ') : 'your search';
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -60,7 +79,7 @@ export default function CafeSearchPage() {
               Discover Your Perfect Cafe
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Search for cozy cafes in your area and find your next favorite spot
+              Search for cozy cafes by name, city, or area and find your next favorite spot
             </p>
 
             {/* Search Form */}
@@ -68,12 +87,12 @@ export default function CafeSearchPage() {
               <div className="bg-card rounded-2xl shadow-xl p-6 space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="keyword" className="text-sm font-medium text-foreground block text-left">
-                    Cafe Name or Keyword
+                    Cafe Name or Keyword (Optional)
                   </label>
                   <Input
                     id="keyword"
                     type="text"
-                    placeholder="e.g., Coffee House, Espresso..."
+                    placeholder="e.g., Coffee, Tea, Espresso..."
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     className="h-12 text-base"
@@ -81,18 +100,31 @@ export default function CafeSearchPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium text-foreground block text-left">
-                    City or Area (Optional)
+                    City (Optional)
                   </label>
                   <Input
                     id="city"
                     type="text"
-                    placeholder="e.g., Downtown, Brooklyn..."
+                    placeholder="e.g., London, New York..."
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     className="h-12 text-base"
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={!keyword.trim()}>
+                <div className="space-y-2">
+                  <label htmlFor="area" className="text-sm font-medium text-foreground block text-left">
+                    Area (Optional)
+                  </label>
+                  <Input
+                    id="area"
+                    type="text"
+                    placeholder="e.g., Downtown, Brooklyn..."
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                    className="h-12 text-base"
+                  />
+                </div>
+                <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={!isSearchEnabled}>
                   <Search className="mr-2 h-5 w-5" />
                   Search Cafes
                 </Button>
@@ -121,6 +153,7 @@ export default function CafeSearchPage() {
                 <EmptyState
                   keyword={searchParams.keyword}
                   city={searchParams.city}
+                  area={searchParams.area}
                 />
               )}
 
@@ -131,8 +164,7 @@ export default function CafeSearchPage() {
                       Found {cafes.length} {cafes.length === 1 ? 'cafe' : 'cafes'}
                     </h2>
                     <p className="text-muted-foreground">
-                      Showing results for "{searchParams.keyword}"
-                      {searchParams.city && ` in ${searchParams.city}`}
+                      Showing results for {getResultsSummary()}
                     </p>
                   </div>
 

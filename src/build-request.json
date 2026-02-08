@@ -1,55 +1,72 @@
 {
   "kind": "build_request",
-  "title": "Support worldwide map browsing without Google Maps (improve tile map wrapping)",
-  "priority": "normal",
+  "title": "Fix cafe search so keyword is optional and city/area work independently",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-12",
-      "text": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
-      "target": "frontend",
+      "id": "REQ-14",
+      "text": "Update the Motoko backend searchCafes logic so that keyword matching is optional and city and area filters can return results independently (i.e., any combination of keyword, city, and area should work, including city-only and area-only searches).",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-6"
         ],
         "quotes": [
-          "This app wants to work for world wide ,so add google map to it."
+          "Yes..make keywords is optional , city & area works.. if the user search tea, coffee, ect . It wants show near by shop and if user search particular city/area also wants to visible to user."
         ]
       },
       "acceptanceCriteria": [
-        "Panning horizontally across the International Date Line continues to render map tiles (tile X wraps correctly for the current zoom level).",
-        "Panning vertically does not request tiles outside valid Web Mercator bounds (tile Y is clamped to the valid range for the current zoom level).",
-        "No console errors are produced due to invalid tile URLs when panning/zooming around the world."
+        "Calling searchCafes with an empty/blank keyword and a non-empty city returns cafes whose city matches (case-insensitive, partial match).",
+        "Calling searchCafes with an empty/blank keyword and a non-empty area returns cafes whose area matches (case-insensitive, partial match).",
+        "Calling searchCafes with a non-empty keyword and empty city/area returns cafes whose name matches the keyword (case-insensitive, partial match).",
+        "Calling searchCafes with keyword+city and/or keyword+area and/or city+area returns cafes that satisfy all provided (non-null / non-blank) filters.",
+        "If all three inputs are empty/blank, the backend returns an empty result set (to avoid returning all cafes unintentionally).",
+        "Search results remain sorted by cafe name as they are today."
       ]
     },
     {
-      "id": "REQ-13",
-      "text": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
+      "id": "REQ-15",
+      "text": "Update the frontend cafe search form and data hook so users can search when keyword is empty as long as city and/or area is provided, and ensure both city and area are passed to the backend searchCafes call.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-6"
         ],
         "quotes": [
-          "This app wants to work for world wide ,so add google map to it."
+          "make keywords is optional , city & area works"
         ]
       },
       "acceptanceCriteria": [
-        "When the map is shown without any cafes/center override, the initial viewport is a world-level view (not a single-city default).",
-        "When cafes are present, the map still centers as it does today (first cafe by default, and centers on a cafe when selected from the list)."
+        "The search button is enabled when at least one of: keyword, city, or area has non-whitespace content.",
+        "Submitting the form triggers a React Query search request when at least one field is provided; it does not require keyword.",
+        "The frontend search hook includes keyword, city, and area in its queryKey and passes all three to actor.searchCafes(keyword, cityOrNull, areaOrNull).",
+        "The UI provides separate inputs for City and Area (or otherwise captures both values distinctly) and uses English labels/placeholders.",
+        "The empty state and results summary text correctly reflect searches that may omit keyword (e.g., city-only/area-only searches do not display misleading 'Showing results for \"\"')."
       ]
     }
   ],
   "constraints": [
-    "Do not add Google Maps (SDK, script tag, or any @googlemaps/* packages); the deployment/preview environment is known to fail with Google Maps integrations.",
-    "Do not modify any files under frontend/src/components/ui (immutable UI sources).",
-    "Keep the existing warm, earthy theme and current map/list coordination behavior."
+    "Backend must remain a single Motoko actor with all logic in backend/main.mo.",
+    "Do not edit any files under frontend/src/components/ui or any other path listed in frontend.immutablePaths; compose existing components instead.",
+    "Keep user-facing text in English."
   ],
   "nonGoals": [
-    "Adding Google Maps Platform, Google Places APIs, or any Google billing/API-key-based integration.",
-    "Implementing geocoding/place search via third-party APIs (e.g., converting a typed city to coordinates)."
+    "Implementing true 'nearby' geolocation-based search (distance calculations) based on user GPS location.",
+    "Adding maps provider integrations (e.g., Google Maps) or changing the existing tile-based map implementation.",
+    "Adding new data fields (e.g., cafe categories/tags) beyond using existing name/city/area fields for matching."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

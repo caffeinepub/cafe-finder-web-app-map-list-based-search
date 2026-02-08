@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Make the existing OpenStreetMap tile map support reliable worldwide browsing by handling longitudinal wrap-around and latitude bounds, without adding Google Maps.
+**Goal:** Make cafe search work with any combination of keyword, city, and area, including city-only and area-only searches.
 
 **Planned changes:**
-- Update tile URL/tile index logic so tile X wraps correctly across the International Date Line for each zoom level.
-- Clamp tile Y requests to valid Web Mercator bounds per zoom level to avoid invalid tile URLs and rendering gaps.
-- Adjust the default map viewport to a neutral, world-level view when no cafes are available, while keeping current centering behavior when cafes exist or a cafe is selected.
+- Update the Motoko `searchCafes` backend logic so keyword is optional, city/area filters work independently, and results match all provided (non-blank) filters using case-insensitive partial matching.
+- Ensure `searchCafes` returns an empty result set when keyword, city, and area are all blank, while keeping results sorted by cafe name.
+- Update the frontend search form to allow searching when keyword is empty as long as city and/or area is provided, with distinct City and Area inputs (English labels/placeholders).
+- Update the frontend search hook/React Query usage so `keyword`, `city`, and `area` are included in the queryKey and all three are passed to `actor.searchCafes(keyword, cityOrNull, areaOrNull)`.
+- Adjust empty state and results summary text so city-only/area-only searches don’t display misleading keyword-based messaging.
 
-**User-visible outcome:** Users can pan/zoom anywhere on Earth without tile-loading errors (including across the Date Line), and the map opens to a world view when there are no cafe results.
+**User-visible outcome:** Users can search for cafes by keyword, by city, by area, or any combination of these fields, and the search button works as long as at least one field is filled.

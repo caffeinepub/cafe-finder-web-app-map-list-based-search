@@ -60,36 +60,27 @@ actor {
   public query ({ caller }) func searchCafes(keyword : Text, city : ?Text, area : ?Text) : async [Cafe] {
     let resultsList = List.empty<Cafe>();
 
+    let keywordIsEmpty = keyword.size() == 0;
+
     for (cafe in cafeMap.values()) {
-      if (cafe.name.toLower().contains(#text(keyword.toLower()))) {
-        switch (city) {
-          case (?cityText) {
-            if (cafe.city.name.toLower().contains(#text(cityText.toLower()))) {
-              switch (area) {
-                case (?areaText) {
-                  if (cafe.area.name.toLower().contains(#text(areaText.toLower()))) {
-                    resultsList.add(cafe);
-                  };
-                };
-                case (null) {
-                  resultsList.add(cafe);
-                };
-              };
-            };
-          };
-          case (null) {
-            switch (area) {
-              case (?areaText) {
-                if (cafe.area.name.toLower().contains(#text(areaText.toLower()))) {
-                  resultsList.add(cafe);
-                };
-              };
-              case (null) {
-                resultsList.add(cafe);
-              };
-            };
-          };
+      let cafeMatchesKeyword = keywordIsEmpty or cafe.name.toLower().contains(#text(keyword.toLower()));
+      let cafeMatchesCity = switch (city) {
+        case (?cityText) {
+          cafe.city.name.toLower().contains(#text(cityText.toLower()));
         };
+        case (null) { true };
+      };
+
+      let cafeMatchesArea = switch (area) {
+        case (?areaText) {
+          cafe.area.name.toLower().contains(#text(areaText.toLower()));
+        };
+        case (null) { true };
+      };
+
+      // Only add cafe if all filters match
+      if (cafeMatchesKeyword and cafeMatchesCity and cafeMatchesArea) {
+        resultsList.add(cafe);
       };
     };
 
@@ -104,3 +95,4 @@ actor {
     };
   };
 };
+

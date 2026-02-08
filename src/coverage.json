@@ -1,48 +1,48 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T03:13:58.947Z",
+  "generatedAt": "2026-02-08T03:25:45.840Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 2,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-12",
-        "summary": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/webMercator.ts",
-          "frontend/src/components/cafes/CafeTileMap.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/webMercator.ts",
-          "frontend/src/components/cafes/CafeTileMap.tsx"
-        ]
+        "id": "REQ-14",
+        "summary": "Update the Motoko backend searchCafes logic so that keyword matching is optional and city and area filters can return results independently (i.e., any combination of keyword, city, and area should work, including city-only and area-only searches).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
-        "id": "REQ-13",
-        "summary": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
+        "id": "REQ-15",
+        "summary": "Update the frontend cafe search form and data hook so users can search when keyword is empty as long as city and/or area is provided, and ensure both city and area are passed to the backend searchCafes call.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/cafes/CafeTileMap.tsx"
+          "frontend/src/hooks/useCafeSearch.ts",
+          "frontend/src/pages/CafeSearchPage.tsx",
+          "frontend/src/components/cafes/EmptyState.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/cafes/CafeTileMap.tsx"
+          "frontend/src/hooks/useCafeSearch.ts",
+          "frontend/src/pages/CafeSearchPage.tsx",
+          "frontend/src/components/cafes/EmptyState.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/cafes/CafeTileMap.tsx",
-    "frontend/src/lib/webMercator.ts",
+    "frontend/src/components/cafes/EmptyState.tsx",
+    "frontend/src/hooks/useCafeSearch.ts",
+    "frontend/src/pages/CafeSearchPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
