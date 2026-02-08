@@ -12,5 +12,6 @@
   "frontend/src/hooks/useCafeDetails.ts": "React Query hook for fetching a single cafe by ID with error handling and caching.",
   "frontend/src/index.css": "Global styles with warm, earthy OKLCH color palette (amber/orange tones) for both light and dark modes.",
   "frontend/tailwind.config.js": "Tailwind configuration with Inter font family, warm color tokens, custom border radius, and soft shadow utilities.",
-  "frontend/src/components/cafes/CafeTileMap.tsx": "Custom tile-based map component using OpenStreetMap tiles with Web Mercator projection, supporting pan/zoom interactions, cafe markers with click/hover states, and popup navigation to cafe details without requiring any API keys or external map libraries, with proper TypeScript type guards for tile image handling."
+  "frontend/src/components/cafes/CafeTileMap.tsx": "Custom tile-based map component using OpenStreetMap tiles with worldwide support via Web Mercator projection, featuring horizontal wrap-around across the International Date Line, latitude bounds clamping, pan/zoom interactions, cafe markers with click/hover states, and a world-level default view when no cafes are present.",
+  "frontend/src/lib/webMercator.ts": "Web Mercator projection utilities providing latitude/longitude normalization, clamping, tile coordinate conversion with horizontal wrap-around support, and pixel-to-coordinate transformations for worldwide tile map rendering."
 }

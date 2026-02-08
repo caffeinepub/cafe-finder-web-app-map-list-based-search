@@ -3,34 +3,21 @@ import { MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { Cafe } from '@/backend';
+import {
+  latLngToPixel,
+  wrapTileX,
+  clampTileY,
+  pixelToLatLng,
+  normalizeLongitude,
+  clampLatitude,
+  TILE_SIZE,
+} from '@/lib/webMercator';
 
 interface CafeTileMapProps {
   cafes: Cafe[];
   selectedCafeId?: string | null;
   onCafeSelect?: (cafeId: string) => void;
   centerOn?: { lat: number; lng: number };
-}
-
-// Web Mercator projection utilities
-const TILE_SIZE = 256;
-
-function latLngToTile(lat: number, lng: number, zoom: number) {
-  const x = ((lng + 180) / 360) * Math.pow(2, zoom);
-  const y =
-    ((1 -
-      Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) /
-        Math.PI) /
-      2) *
-    Math.pow(2, zoom);
-  return { x, y };
-}
-
-function latLngToPixel(lat: number, lng: number, zoom: number) {
-  const tile = latLngToTile(lat, lng, zoom);
-  return {
-    x: tile.x * TILE_SIZE,
-    y: tile.y * TILE_SIZE,
-  };
 }
 
 export default function CafeTileMap({
@@ -41,8 +28,10 @@ export default function CafeTileMap({
 }: CafeTileMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [zoom, setZoom] = useState(12);
-  const [center, setCenter] = useState({ lat: 40.7128, lng: -74.006 }); // Default NYC
+  
+  // Default to world view when no cafes/center, otherwise use appropriate zoom for results
+  const [zoom, setZoom] = useState(cafes.length > 0 || centerOn ? 12 : 2);
+  const [center, setCenter] = useState({ lat: 0, lng: 0 }); // World center default
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -53,10 +42,22 @@ export default function CafeTileMap({
   // Initialize center from first cafe or centerOn prop
   useEffect(() => {
     if (centerOn) {
-      setCenter({ lat: centerOn.lat, lng: centerOn.lng });
+      setCenter({ lat: clampLatitude(centerOn.lat), lng: normalizeLongitude(centerOn.lng) });
+      setZoom(12); // Restore appropriate zoom for viewing a specific cafe
+      setOffset({ x: 0, y: 0 }); // Reset offset when programmatically centering
     } else if (cafes.length > 0 && !centerOn) {
       const firstCafe = cafes[0];
-      setCenter({ lat: firstCafe.coordinates[0], lng: firstCafe.coordinates[1] });
+      setCenter({
+        lat: clampLatitude(firstCafe.coordinates[0]),
+        lng: normalizeLongitude(firstCafe.coordinates[1]),
+      });
+      setZoom(12); // Restore appropriate zoom for viewing results
+      setOffset({ x: 0, y: 0 }); // Reset offset when programmatically centering
+    } else if (cafes.length === 0 && !centerOn) {
+      // No cafes and no center override: show world view
+      setCenter({ lat: 0, lng: 0 });
+      setZoom(2);
+      setOffset({ x: 0, y: 0 });
     }
   }, [cafes, centerOn]);
 
@@ -78,8 +79,12 @@ export default function CafeTileMap({
     ctx.fillStyle = '#f3f4f6';
     ctx.fillRect(0, 0, width, height);
 
-    // Calculate center pixel
-    const centerPixel = latLngToPixel(center.lat, center.lng, zoom);
+    // Calculate center pixel with normalized coordinates
+    const normalizedCenter = {
+      lat: clampLatitude(center.lat),
+      lng: normalizeLongitude(center.lng),
+    };
+    const centerPixel = latLngToPixel(normalizedCenter.lat, normalizedCenter.lng, zoom);
     const viewCenterX = width / 2;
     const viewCenterY = height / 2;
 
@@ -89,22 +94,33 @@ export default function CafeTileMap({
     const endTileX = Math.ceil((centerPixel.x + viewCenterX + offset.x) / TILE_SIZE);
     const endTileY = Math.ceil((centerPixel.y + viewCenterY + offset.y) / TILE_SIZE);
 
-    // Draw tiles
+    // Draw tiles with wrap-around for X and clamping for Y
     for (let tileX = startTileX; tileX <= endTileX; tileX++) {
       for (let tileY = startTileY; tileY <= endTileY; tileY++) {
-        const tileKey = `${zoom}/${tileX}/${tileY}`;
+        // Wrap X coordinate for horizontal wrap-around
+        const wrappedTileX = wrapTileX(tileX, zoom);
+        // Clamp Y coordinate to valid range
+        const clampedTileY = clampTileY(tileY, zoom);
+        
+        // Skip if Y is out of bounds (shouldn't happen with clamping, but safety check)
+        const maxTile = Math.pow(2, zoom) - 1;
+        if (tileY < 0 || tileY > maxTile) continue;
+
+        // Use wrapped/clamped coordinates for cache key and URL
+        const tileKey = `${zoom}/${wrappedTileX}/${clampedTileY}`;
         let tile = tilesCache.current.get(tileKey);
 
         if (!tile) {
           tile = new Image();
           tile.crossOrigin = 'anonymous';
-          tile.src = `https://tile.openstreetmap.org/${zoom}/${tileX}/${tileY}.png`;
+          tile.src = `https://tile.openstreetmap.org/${zoom}/${wrappedTileX}/${clampedTileY}.png`;
           tilesCache.current.set(tileKey, tile);
 
           tile.onload = () => {
             if (canvasRef.current) {
               const ctx = canvasRef.current.getContext('2d');
               if (ctx && tile) {
+                // Use original tileX for drawing position (not wrapped) to maintain continuity
                 const x = tileX * TILE_SIZE - (centerPixel.x - viewCenterX + offset.x);
                 const y = tileY * TILE_SIZE - (centerPixel.y - viewCenterY + offset.y);
                 ctx.drawImage(tile, x, y, TILE_SIZE, TILE_SIZE);
@@ -114,6 +130,7 @@ export default function CafeTileMap({
         }
 
         if (tile && tile.complete) {
+          // Use original tileX for drawing position (not wrapped) to maintain continuity
           const x = tileX * TILE_SIZE - (centerPixel.x - viewCenterX + offset.x);
           const y = tileY * TILE_SIZE - (centerPixel.y - viewCenterY + offset.y);
           ctx.drawImage(tile, x, y, TILE_SIZE, TILE_SIZE);
@@ -193,7 +210,11 @@ export default function CafeTileMap({
 
       const width = container.clientWidth;
       const height = container.clientHeight;
-      const centerPixel = latLngToPixel(center.lat, center.lng, zoom);
+      const normalizedCenter = {
+        lat: clampLatitude(center.lat),
+        lng: normalizeLongitude(center.lng),
+      };
+      const centerPixel = latLngToPixel(normalizedCenter.lat, normalizedCenter.lng, zoom);
       const viewCenterX = width / 2;
       const viewCenterY = height / 2;
 
@@ -232,19 +253,17 @@ export default function CafeTileMap({
       if (canvas && container) {
         const width = container.clientWidth;
         const height = container.clientHeight;
-        const centerPixel = latLngToPixel(center.lat, center.lng, zoom);
+        const normalizedCenter = {
+          lat: clampLatitude(center.lat),
+          lng: normalizeLongitude(center.lng),
+        };
+        const centerPixel = latLngToPixel(normalizedCenter.lat, normalizedCenter.lng, zoom);
         const newCenterPixelX = centerPixel.x + offset.x;
         const newCenterPixelY = centerPixel.y + offset.y;
 
-        // Convert back to lat/lng (inverse Web Mercator)
-        const n = Math.pow(2, zoom);
-        const lng = (newCenterPixelX / TILE_SIZE / n) * 360 - 180;
-        const latRad = Math.atan(
-          Math.sinh(Math.PI - (2 * Math.PI * newCenterPixelY) / TILE_SIZE / n)
-        );
-        const lat = (latRad * 180) / Math.PI;
-
-        setCenter({ lat, lng });
+        // Convert back to lat/lng with normalization
+        const newCenter = pixelToLatLng(newCenterPixelX, newCenterPixelY, zoom);
+        setCenter(newCenter);
         setOffset({ x: 0, y: 0 });
       }
     } else {
@@ -259,7 +278,11 @@ export default function CafeTileMap({
 
       const width = container.clientWidth;
       const height = container.clientHeight;
-      const centerPixel = latLngToPixel(center.lat, center.lng, zoom);
+      const normalizedCenter = {
+        lat: clampLatitude(center.lat),
+        lng: normalizeLongitude(center.lng),
+      };
+      const centerPixel = latLngToPixel(normalizedCenter.lat, normalizedCenter.lng, zoom);
       const viewCenterX = width / 2;
       const viewCenterY = height / 2;
 
@@ -289,7 +312,7 @@ export default function CafeTileMap({
   };
 
   const handleZoomOut = () => {
-    setZoom((z) => Math.max(z - 1, 3));
+    setZoom((z) => Math.max(z - 1, 1));
   };
 
   // Get clicked cafe details
@@ -327,7 +350,7 @@ export default function CafeTileMap({
           variant="secondary"
           onClick={handleZoomOut}
           className="shadow-lg"
-          disabled={zoom <= 3}
+          disabled={zoom <= 1}
         >
           −
         </Button>

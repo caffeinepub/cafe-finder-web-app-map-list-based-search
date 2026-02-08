@@ -1,14 +1,15 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "Build a cafe finder web app using JavaScript with a map-based UI for browsing/searching cafes, using a deployment-supported map solution (e.g., tile-based map) instead of Google Maps if required.",
   "architectural_notes": [
-    "Deployment environment may not support Google Maps libraries; use an alternative map implementation (e.g., tile-based map service) for the interactive map UI."
+    "Deployment environment may not support Google Maps libraries; use an alternative map implementation (e.g., tile-based map service) for the interactive map UI.",
+    "User request: app should work worldwide; prefers using Google Maps for the map experience."
   ],
   "known_issues": [
     "Deployment failed; likely due to unsupported Google Maps library integration in the build/preview environment."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-a-cafe-finder-app-experience-that-lets-users-search-and-browse-cafes-in-a-list-based-ui-no-map-ui-include-a-search-input-name-keyword-and-a-location-text-field-city-area-and-display-matching-cafes-with-basic-details-name-address-tags-if-available",
@@ -89,6 +90,22 @@
         "REQ-11"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-existing-tile-based-map-openstreetmap-tiles-to-support-worldwide-browsing-reliably-by-handling-longitudinal-wrap-around-and-latitude-bounds-so-panning-does-not-request-invalid-tiles-and-the-map-continues-rendering-anywhere-on-earth",
+      "title": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-adjust-the-map-s-default-view-so-the-app-feels-worldwide-ready-when-no-cafe-results-are-available-e-g-start-at-a-world-level-zoom-and-a-neutral-center-while-preserving-the-current-behavior-of-centering-on-the-first-result-or-a-selected-cafe-when-cafes-are-present",
+      "title": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -111,6 +128,12 @@
       "summary": "Replace Google Maps integration with a deployment-supported map solution (e.g., tile-based map/custom map UI) to enable successful builds and previews",
       "reqIds": [],
       "status": "in_progress"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add Google Maps integration to support worldwide map coverage for the cafe finder app",
+      "reqIds": [],
+      "status": "pending"
     }
   ],
   "projectName": "Cafe finder web app (map + list-based search)",

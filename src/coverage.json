@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T03:07:22.097Z",
+  "generatedAt": "2026-02-08T03:13:58.947Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,30 +11,26 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Remove any Google Maps / unsupported map library integration and replace it with a deployment-supported map UI that renders cafe markers using each cafe’s stored coordinates (latitude, longitude), so the app can successfully build and be previewed in the platform environment.",
+        "id": "REQ-12",
+        "summary": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/cafes/CafeTileMap.tsx",
-          "frontend/src/pages/CafeSearchPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/cafes/CafeTileMap.tsx",
-          "frontend/src/pages/CafeSearchPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Ensure map/list coordination works with the supported map UI: selecting a cafe in the list highlights and centers the corresponding marker on the map, and selecting a marker provides a clear UI affordance to open that cafe’s details page.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/CafeSearchPage.tsx",
-          "frontend/src/components/cafes/CafeCard.tsx",
+          "frontend/src/lib/webMercator.ts",
           "frontend/src/components/cafes/CafeTileMap.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/CafeSearchPage.tsx",
-          "frontend/src/components/cafes/CafeCard.tsx",
+          "frontend/src/lib/webMercator.ts",
+          "frontend/src/components/cafes/CafeTileMap.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/cafes/CafeTileMap.tsx"
+        ],
+        "matchedFiles": [
           "frontend/src/components/cafes/CafeTileMap.tsx"
         ]
       }
@@ -42,13 +38,11 @@
   },
   "changedFiles": [
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/cafes/CafeCard.tsx",
     "frontend/src/components/cafes/CafeTileMap.tsx",
-    "frontend/src/pages/CafeSearchPage.tsx",
+    "frontend/src/lib/webMercator.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

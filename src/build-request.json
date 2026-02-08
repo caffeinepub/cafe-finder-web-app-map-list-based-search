@@ -1,55 +1,52 @@
 {
   "kind": "build_request",
-  "title": "Replace Google Maps with a deployment-supported tile-based map UI",
+  "title": "Support worldwide map browsing without Google Maps (improve tile map wrapping)",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-10",
-      "text": "Remove any Google Maps / unsupported map library integration and replace it with a deployment-supported map UI that renders cafe markers using each cafe’s stored coordinates (latitude, longitude), so the app can successfully build and be previewed in the platform environment.",
+      "id": "REQ-12",
+      "text": "Update the existing tile-based map (OpenStreetMap tiles) to support worldwide browsing reliably by handling longitudinal wrap-around and latitude bounds so panning does not request invalid tiles and the map continues rendering anywhere on Earth.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-3"
         ],
         "quotes": [
-          "Yes"
+          "This app wants to work for world wide ,so add google map to it."
         ]
       },
       "acceptanceCriteria": [
-        "The frontend build succeeds without relying on Google Maps Platform or Google Maps JS SDK.",
-        "The cafe search experience includes a map view that can display markers for the currently returned cafes using their stored coordinates.",
-        "No API keys are required for the map to render (tile-based or fully custom map rendering is acceptable)."
+        "Panning horizontally across the International Date Line continues to render map tiles (tile X wraps correctly for the current zoom level).",
+        "Panning vertically does not request tiles outside valid Web Mercator bounds (tile Y is clamped to the valid range for the current zoom level).",
+        "No console errors are produced due to invalid tile URLs when panning/zooming around the world."
       ]
     },
     {
-      "id": "REQ-11",
-      "text": "Ensure map/list coordination works with the supported map UI: selecting a cafe in the list highlights and centers the corresponding marker on the map, and selecting a marker provides a clear UI affordance to open that cafe’s details page.",
+      "id": "REQ-13",
+      "text": "Adjust the map’s default view so the app feels worldwide-ready when no cafe results are available (e.g., start at a world-level zoom and a neutral center), while preserving the current behavior of centering on the first result or a selected cafe when cafes are present.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-3"
         ],
         "quotes": [
-          "Yes"
+          "This app wants to work for world wide ,so add google map to it."
         ]
       },
       "acceptanceCriteria": [
-        "Clicking a cafe card in the results list visually highlights the corresponding marker and recenters the map on it.",
-        "Clicking a marker shows an affordance (e.g., popup/callout/button) that navigates to the selected cafe’s details route (/cafes/$id).",
-        "The coordinated selection state is consistent (only one selected cafe at a time) and works for multiple search result sets (changing search updates markers accordingly)."
+        "When the map is shown without any cafes/center override, the initial viewport is a world-level view (not a single-city default).",
+        "When cafes are present, the map still centers as it does today (first cafe by default, and centers on a cafe when selected from the list)."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
-    "Do not modify any frontend files under frontend/src/components/ui or other paths listed in frontend.immutablePaths; compose existing UI components instead.",
-    "Do not use Google Maps Platform / Google Maps JS SDK or other map integrations that are known to fail in the build/preview environment.",
-    "Use English for any user-facing text."
+    "Do not add Google Maps (SDK, script tag, or any @googlemaps/* packages); the deployment/preview environment is known to fail with Google Maps integrations.",
+    "Do not modify any files under frontend/src/components/ui (immutable UI sources).",
+    "Keep the existing warm, earthy theme and current map/list coordination behavior."
   ],
   "nonGoals": [
-    "Adding third-party authentication providers beyond Internet Identity.",
-    "Adding real-time features (WebSockets) or live location/GPS tracking.",
-    "Introducing external databases or additional backend services."
+    "Adding Google Maps Platform, Google Places APIs, or any Google billing/API-key-based integration.",
+    "Implementing geocoding/place search via third-party APIs (e.g., converting a typed city to coordinates)."
   ],
   "imageRequirements": {
     "required": [],
