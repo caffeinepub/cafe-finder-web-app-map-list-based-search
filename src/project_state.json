@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Build a cafe finder web app using JavaScript with a map-based UI for browsing/searching cafes, using a deployment-supported map solution (e.g., tile-based map) instead of Google Maps if required.",
+  "architectural_notes": [
+    "Deployment environment may not support Google Maps libraries; use an alternative map implementation (e.g., tile-based map service) for the interactive map UI."
+  ],
+  "known_issues": [
+    "Deployment failed; likely due to unsupported Google Maps library integration in the build/preview environment."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-create-a-cafe-finder-app-experience-that-lets-users-search-and-browse-cafes-in-a-list-based-ui-no-map-ui-include-a-search-input-name-keyword-and-a-location-text-field-city-area-and-display-matching-cafes-with-basic-details-name-address-tags-if-available",
+      "title": "Create a cafe finder app experience that lets users search and browse cafes in a list-based UI (no map UI). Include a search input (name/keyword) and a location text field (city/area) and display matching cafes with basic details (name, address, tags if available).",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-the-frontend-to-the-motoko-backend-using-react-query-for-data-fetching-caching-searching-should-update-results-without-full-page-reload-and-should-handle-loading-and-error-states",
+      "title": "Connect the frontend to the Motoko backend using React Query for data fetching/caching; searching should update results without full page reload and should handle loading and error states.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-cafe-details-view-that-opens-when-a-user-selects-a-cafe-from-the-results-list-showing-full-details-name-address-description-notes-if-present-and-any-tags",
+      "title": "Add a cafe details view that opens when a user selects a cafe from the results list, showing full details (name, address, description/notes if present, and any tags).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-coherent-visual-theme-suitable-for-a-cafe-directory-warm-earthy-palette-avoid-blue-purple-readable-typography-and-card-based-layout-with-consistent-spacing-using-tailwind-existing-ui-components-compose-do-not-edit-immutable-ui-sources",
+      "title": "Apply a coherent visual theme suitable for a cafe directory: warm, earthy palette (avoid blue/purple), readable typography, and card-based layout with consistent spacing using Tailwind + existing UI components (compose; do not edit immutable UI sources).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-image-assets-logo-optional-hero-into-the-app-and-reference-them-from-the-ui-via-frontend-public-assets-generated-do-not-serve-images-through-the-backend",
+      "title": "Add generated static image assets (logo + optional hero) into the app and reference them from the UI via frontend/public/assets/generated (do not serve images through the backend).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-map-based-ui-to-the-cafe-search-experience-so-users-can-browse-the-matching-cafes-on-an-interactive-map-using-each-cafe-s-stored-coordinates-latitude-longitude",
+      "title": "Add a map-based UI to the cafe search experience so users can browse the matching cafes on an interactive map using each cafe’s stored coordinates (latitude/longitude).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-map-list-coordination-selecting-a-cafe-from-the-list-highlights-centers-the-corresponding-marker-on-the-map-and-selecting-a-marker-provides-an-affordance-to-open-that-cafe-s-details-page",
+      "title": "Implement map/list coordination: selecting a cafe from the list highlights/centers the corresponding marker on the map, and selecting a marker provides an affordance to open that cafe’s details page.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-the-existing-warm-earthy-visual-theme-while-integrating-the-map-component-card-layout-spacing-and-typography-do-not-modify-any-immutable-ui-component-sources-compose-existing-components-instead",
+      "title": "Keep the existing warm, earthy visual theme while integrating the map component (card layout, spacing, and typography). Do not modify any immutable UI component sources; compose existing components instead.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-any-google-maps-unsupported-map-library-integration-and-replace-it-with-a-deployment-supported-map-ui-that-renders-cafe-markers-using-each-cafe-s-stored-coordinates-latitude-longitude-so-the-app-can-successfully-build-and-be-previewed-in-the-platform-environment",
+      "title": "Remove any Google Maps / unsupported map library integration and replace it with a deployment-supported map UI that renders cafe markers using each cafe’s stored coordinates (latitude, longitude), so the app can successfully build and be previewed in the platform environment.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-map-list-coordination-works-with-the-supported-map-ui-selecting-a-cafe-in-the-list-highlights-and-centers-the-corresponding-marker-on-the-map-and-selecting-a-marker-provides-a-clear-ui-affordance-to-open-that-cafe-s-details-page",
+      "title": "Ensure map/list coordination works with the supported map UI: selecting a cafe in the list highlights and centers the corresponding marker on the map, and selecting a marker provides a clear UI affordance to open that cafe’s details page.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Cafe finder built with JavaScript and Google Maps Platform (search/browse nearby cafes with map-based UI)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Implement a single-actor Motoko backend that stores a catalog of cafes and exposes query methods to (a) list cafes, (b) search cafes by keyword and optional city/area, and (c) fetch a cafe by ID.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Replace Google Maps integration with a deployment-supported map solution (e.g., tile-based map/custom map UI) to enable successful builds and previews",
+      "reqIds": [],
+      "status": "in_progress"
+    }
+  ],
+  "projectName": "Cafe finder web app (map + list-based search)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,44 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-remove-any-google-maps-unsupported-map-library-integration-and-replace-it-with-a-deployment-supported-map-ui-that-renders-cafe-markers-using-each-cafe-s-stored-coordinates-latitude-longitude-so-the-app-can-successfully-build-and-be-previewed-in-the-platform-environment",
+      "featureTitle": "Remove any Google Maps / unsupported map library integration and replace it with a deployment-supported map UI that renders cafe markers using each cafe’s stored coordinates (latitude, longitude), so the app can successfully build and be previewed in the platform environment.",
+      "files": [
+        "frontend/src/components/cafes/CafeTileMap.tsx",
+        "frontend/src/pages/CafeSearchPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-map-list-coordination-works-with-the-supported-map-ui-selecting-a-cafe-in-the-list-highlights-and-centers-the-corresponding-marker-on-the-map-and-selecting-a-marker-provides-a-clear-ui-affordance-to-open-that-cafe-s-details-page",
+      "featureTitle": "Ensure map/list coordination works with the supported map UI: selecting a cafe in the list highlights and centers the corresponding marker on the map, and selecting a marker provides a clear UI affordance to open that cafe’s details page.",
+      "files": [
+        "frontend/src/components/cafes/CafeCard.tsx",
+        "frontend/src/components/cafes/CafeTileMap.tsx",
+        "frontend/src/pages/CafeSearchPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

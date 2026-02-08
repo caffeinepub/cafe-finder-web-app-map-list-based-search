@@ -1,0 +1,58 @@
+{
+  "kind": "build_request",
+  "title": "Replace Google Maps with a deployment-supported tile-based map UI",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-10",
+      "text": "Remove any Google Maps / unsupported map library integration and replace it with a deployment-supported map UI that renders cafe markers using each cafe’s stored coordinates (latitude, longitude), so the app can successfully build and be previewed in the platform environment.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Yes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The frontend build succeeds without relying on Google Maps Platform or Google Maps JS SDK.",
+        "The cafe search experience includes a map view that can display markers for the currently returned cafes using their stored coordinates.",
+        "No API keys are required for the map to render (tile-based or fully custom map rendering is acceptable)."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Ensure map/list coordination works with the supported map UI: selecting a cafe in the list highlights and centers the corresponding marker on the map, and selecting a marker provides a clear UI affordance to open that cafe’s details page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Yes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clicking a cafe card in the results list visually highlights the corresponding marker and recenters the map on it.",
+        "Clicking a marker shows an affordance (e.g., popup/callout/button) that navigates to the selected cafe’s details route (/cafes/$id).",
+        "The coordinated selection state is consistent (only one selected cafe at a time) and works for multiple search result sets (changing search updates markers accordingly)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
+    "Do not modify any frontend files under frontend/src/components/ui or other paths listed in frontend.immutablePaths; compose existing UI components instead.",
+    "Do not use Google Maps Platform / Google Maps JS SDK or other map integrations that are known to fail in the build/preview environment.",
+    "Use English for any user-facing text."
+  ],
+  "nonGoals": [
+    "Adding third-party authentication providers beyond Internet Identity.",
+    "Adding real-time features (WebSockets) or live location/GPS tracking.",
+    "Introducing external databases or additional backend services."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

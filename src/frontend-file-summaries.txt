@@ -1,0 +1,16 @@
+{
+  "frontend/src/App.tsx": "Main application component that sets up TanStack Router with routes for the cafe search page (/) and cafe details page (/cafes/:id), wrapped in AppLayout.",
+  "frontend/src/pages/CafeSearchPage.tsx": "Home page with hero section, search form, and tabbed results view (list/map) that coordinates selection state between CafeCard list and CafeTileMap, centering the map when a cafe is selected from the list and updating selection when markers are clicked.",
+  "frontend/src/pages/CafeDetailsPage.tsx": "Cafe details page that displays full information for a selected cafe including name, address, coordinates, city, and area with back navigation and not-found handling.",
+  "frontend/src/components/cafes/CafeCard.tsx": "Reusable cafe card component with optional selection state and onSelect callback, displaying cafe information with visual highlight when selected and a \"View Details\" button when used in selectable mode.",
+  "frontend/src/components/cafes/EmptyState.tsx": "Empty state component showing appropriate messages for no search query or no results found scenarios.",
+  "frontend/src/components/cafes/LoadingState.tsx": "Loading skeleton component displaying placeholder cards while cafe search results are being fetched.",
+  "frontend/src/components/layout/AppLayout.tsx": "Root layout component that wraps all pages with Header, main content area (Outlet), and Footer.",
+  "frontend/src/components/layout/Header.tsx": "Application header with logo, cafe icon, and app title that navigates to home when clicked.",
+  "frontend/src/components/layout/Footer.tsx": "Footer component with copyright notice and caffeine.ai attribution link with heart icon.",
+  "frontend/src/hooks/useCafeSearch.ts": "React Query hook for searching cafes by keyword and optional city with caching and loading states.",
+  "frontend/src/hooks/useCafeDetails.ts": "React Query hook for fetching a single cafe by ID with error handling and caching.",
+  "frontend/src/index.css": "Global styles with warm, earthy OKLCH color palette (amber/orange tones) for both light and dark modes.",
+  "frontend/tailwind.config.js": "Tailwind configuration with Inter font family, warm color tokens, custom border radius, and soft shadow utilities.",
+  "frontend/src/components/cafes/CafeTileMap.tsx": "Custom tile-based map component using OpenStreetMap tiles with Web Mercator projection, supporting pan/zoom interactions, cafe markers with click/hover states, and popup navigation to cafe details without requiring any API keys or external map libraries, with proper TypeScript type guards for tile image handling."
+}

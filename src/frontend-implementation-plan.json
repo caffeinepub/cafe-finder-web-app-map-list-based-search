@@ -1,0 +1,54 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Tile-based map UI for cafe search (no Google Maps)",
+  "requirements": [
+    {
+      "id": "REQ-10",
+      "summary": "Replace any Google Maps/unsupported map integration with a deployment-supported tile-based map that renders cafe markers from stored coordinates, requiring no API keys.",
+      "acceptanceCriteria": [
+        "The frontend build succeeds without relying on Google Maps Platform or Google Maps JS SDK.",
+        "The cafe search experience includes a map view that can display markers for the currently returned cafes using their stored coordinates.",
+        "No API keys are required for the map to render (tile-based or fully custom map rendering is acceptable)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/cafes/CafeTileMap.tsx",
+          "operation": "create",
+          "description": "Create a deployment-friendly, tile-based (OpenStreetMap tile URL) React map component that supports basic pan/zoom and renders marker buttons at cafe latitude/longitude positions using Web Mercator projection math; no Google Maps and no API keys. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/CafeSearchPage.tsx",
+          "operation": "modify",
+          "description": "Integrate the new CafeTileMap into the search results experience (alongside the list) and remove any existing Google Maps/unsupported map usage in this page so markers are driven by returned cafes' coordinates. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Coordinate selection between results list and map: list selection highlights/centers marker; marker selection offers navigation affordance to cafe details; selection is single and updates with new searches.",
+      "acceptanceCriteria": [
+        "Clicking a cafe card in the results list visually highlights the corresponding marker and recenters the map on it.",
+        "Clicking a marker shows an affordance (e.g., popup/callout/button) that navigates to the selected cafe’s details route (/cafes/$id).",
+        "The coordinated selection state is consistent (only one selected cafe at a time) and works for multiple search result sets (changing search updates markers accordingly)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CafeSearchPage.tsx",
+          "operation": "modify",
+          "description": "Add coordinated selection state (single selected cafe id) shared between list and CafeTileMap; when results change, reset selection appropriately; when a cafe is selected from the list, pass a new center/target to the map to recenter and visually highlight the corresponding marker. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/cafes/CafeCard.tsx",
+          "operation": "modify",
+          "description": "Extend CafeCard to support a selectable mode used by the search results list: accept optional props for selected state and onSelect (without touching immutable ui components), and provide a clear in-card affordance to open the cafe details route while preserving list-click selection behavior. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/cafes/CafeTileMap.tsx",
+          "operation": "modify",
+          "description": "Implement marker interactions: clicking a marker selects/highlights it and shows a callout/popup UI with a button/link that navigates to /cafes/$id; ensure only one marker is selected at a time and selection stays consistent with list selection. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}
